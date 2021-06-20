@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/bootstrap.css" />
+
+    <script>
+      var sampless = '';
+      var len;
+      var playlists;
+      function myFunction() {
+        document
+          .getElementById("selector")
+          .addEventListener("click", function () {
+            //console.log("You selected: ", this.value);
+            sampless = this.value;
+            process(this.value);
+          });
+      }
+
+      function process(value) {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "samples/" + value + ".json", true);
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            //console.log(this.responseText);
+
+            playlists = JSON.parse(this.responseText);
+            var received = JSON.parse(JSON.stringify(playlists));
+            var received1 = JSON.parse(JSON.stringify(received));
+            //console.log(received);
+            let count = 0;
+            let html = "";
+           
+            for (let [key, value] of Object.entries(playlists)) {
+              // console.log(`${key}`);
+              
+
+      
+
+           
+              /*console.log(`${key}`);*/
+              for (var i = 0; i < `${value.length}`; i++) {
+                len = `${value.length}`;
+               /* for (var j = 0; j < value[i].tracks.length; j++) {
+                  console.log(value[i].tracks[j].pos);
+                console.log(value[i].tracks[j].track_name);
+                console.log(value[i].tracks[j].artist_name);
+                console.log(value[i].tracks[j].album_name);
+                console.log("-------------------------------------")
+                }*/
+                
+
+                html += `<button onClick='last(this.id)' id="${sampless}${i}" class='btn btn-dark' style='margin-left:2%;width:60%;position:relative' ><b style='color:#f0ad4e'>pid:</b>${value[i].pid}   <b style='color:#f0ad4e'>name:</b>${value[i].name}   <b style='color:#f0ad4e'>number of tracks:</b>${value[i].num_tracks}</button><br>`;
+
+                document.querySelector("#playlists").innerHTML = html;
+              }
+              count += 1;
+            }
+           
+            /*for (let [key, value] of Object.entries(playlists)) {
+              console.log(`${value}`);
+            }*/
+
+            /* let html = `<br><br><br><br><button>${received1.key}</button>`;
+            document.querySelector("#playlists").innerHTML = html;*/
+          }
+        };
+
+        xhttp.send();
+      }
+      var mn;
+      function last(clicked_id){
+         mn = clicked_id;
+        /*console.log(clicked_id);
+        console.log(len);*/
+        document.querySelector('#'+clicked_id).addEventListener('click',loadInfo());
+        /*for (var i = 0; i < len; i++) {
+          console.log(`${sampless}${i}`);
+       
+        
+      }*/
+    }
+      function loadInfo(){
+
+
+        let slice = mn.slice(7);
+        //console.log(slice)
+        let html = '';
+        for (let [key, value] of Object.entries(playlists)) {
+          for (var i = 0; i < `${value.length}`; i++) {
+                
+                for (var j = 0; j < value[i].tracks.length; j++) {
+                  if(i == slice){
+                    
+                  /*console.log(value[i].tracks[j].pos);
+                console.log(value[i].tracks[j].track_name);
+                console.log(value[i].tracks[j].artist_name);
+                console.log(value[i].tracks[j].album_name);
+                console.log("-------------------------------------")*/
+                 html += `<button  class='btn btn-dark mt-2' ><b style='color:green'>pos:</b>${value[i].tracks[j].pos}   <b style='color:green'>track_name:</b>${value[i].tracks[j].track_name}    <b style='color:green'>artist_name:</b>${value[i].tracks[j].artist_name}   <b style='color:green'>album_name:</b>${value[i].tracks[j].album_name}</button><br>`;
+
+                document.querySelector("#tracks").innerHTML = html;
+               } }
+                
+
+                //html += `<button onClick='last(this.id)' id="${sampless}${i}" class='btn btn-dark w-50' style='margin-left:25%' ><b style='color:#f0ad4e'>pid:</b>${value[i].pid}   <b style='color:#f0ad4e'>name:</b>${value[i].name}   <b style='color:#f0ad4e'>number of tracks:</b>${value[i].num_tracks}</button><br>`;
+
+               // document.querySelector("#playlists").innerHTML = html;
+              }
+
+
+        }
+       // console.log(mn);
+      }
+    </script>
+    <title>Home</title>
+  </head>
+  <style>
+    .back {
+      background-color: #191414;
+    }
+    .header {
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bolder;
+      text-align: center;
+    }
+    .second {
+      background-color: #1db954;
+      width: 100%;
+      padding-bottom: 30%;
+      margin-top: 3%;
+    }
+  </style>
+  <body class="back container">
+    <div style="background-color: #1db954">
+      <h1 class="header">Simple Playlist Visualizer</h1>
+    </div>
+
+    <div class="second">
+      <div class="d-flex flex-row d-flex justify-content-center">
+        <h2 class="header mt-3">Select a File:</h2>
+        <form>
+          <select
+            onchange="myFunction()"
+            id="selector"
+            class="form-control w-100 mt-3"
+          >
+            <option>Choose...</option>
+            <option id="s1" value="sample1">Sample1</option>
+            <option id="s2" value="sample2">Sample2</option>
+            <option id="s3" value="sample3">Sample3</option>
+          </select>
+        </form>
+      </div>
+      <div class="d-flex flex-row">
+      <div
+        class="d-flex flex-column" style="margin-bottom: 15%;"
+        id="playlists"
+      >
+      
+
+      </div>
+      <div id="tracks" style="width:65%" ></div></div>
+    </div>
+  </body>
+</html>
